@@ -1,11 +1,14 @@
 from flask import Flask, request, jsonify
 import numpy as np
 import joblib
+from flask_cors import CORS
 
 # Load the trained model
 model = joblib.load('random_forest_model2.pkl')
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
+
 
 @app.route('/')
 def index():
