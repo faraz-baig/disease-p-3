@@ -1,9 +1,9 @@
 from flask import Flask, request, jsonify
 import numpy as np
-import pickle
+import joblib
 
 # Load the trained model
-model = pickle.load(open('random_forest_model2.pkl','rb'))
+model = joblib.load('random_forest_model2.pkl')
 
 app = Flask(__name__)
 
