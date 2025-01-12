@@ -13,17 +13,20 @@ def index():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    if not request.json:
-        return jsonify({'error': 'Input data must be in JSON format'}), 400
-
-    data = request.json
+    # Handle form-data or JSON input
+    if request.content_type == 'application/json':
+        data = request.json
+    elif request.content_type.startswith('multipart/form-data'):
+        # Convert form-data into a dictionary
+        data = {key: request.form.get(key, 0) for key in model.feature_names_in_}
+    else:
+        return jsonify({'error': 'Unsupported Content-Type. Use JSON or form-data.'}), 400
 
     # Get the expected features from the model
     expected_features = model.feature_names_in_
 
-    # Ensure the input data has exactly the expected features
-    # Add missing features and set them to 0
-    input_data = {feature: data.get(feature, 0) for feature in expected_features}
+    # Ensure the input data includes all required features
+    input_data = {feature: float(data.get(feature, 0)) for feature in expected_features}
 
     # Convert input_data to a numpy array in the correct order
     input_query = np.array([list(input_data.values())])
